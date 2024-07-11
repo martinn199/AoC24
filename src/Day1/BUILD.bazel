@@ -8,3 +8,12 @@ cc_binary(
     toolchains = ["@bazel_tools//tools/cpp:toolchain"],
     data = ["input.txt"],
 )
+
+cc_binary(
+    name = "Day1Part2",
+    srcs = ["Day1Part2.c"],
+    visibility = ["//visibility:public"],
+    copts = ["-std=c90"],
+    toolchains = ["@bazel_tools//tools/cpp:toolchain"],
+    data = ["input.txt"],
+)
