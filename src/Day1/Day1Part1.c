@@ -2,63 +2,60 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-/*Define constants*/
+/* Define constants */
 #define MAX_ROWS 1000
-#define MAX_LEN 100
+#define MAX_LEN 20
+
+/* Sort the array */
+int SortColumn(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
 
 int main() {
-    /*Define variables*/
+    /* Define variables */
     char line[MAX_LEN];
-    int i, length;
-    int j = 0;
-    int FoundFirstDigit = 0;
+    int ValuesLeft[MAX_ROWS];
+    int ValuesRight[MAX_ROWS];
+    int LeftValue;
+    int RightValue;
+    int Sum = 0;
+    int i = 0;
 
-    /*Store calibration values and the sum of all of the calibration values*/
-    char CalVal[MAX_ROWS][2] = {0};
-    int TotCalVal = 0;
-
-    /*Read file*/
+    /* Read file */
     FILE * fPointer;
     fPointer = fopen("src/Day1/input.txt", "r");
 
-    /*If there exist no file, return an error*/
+    /* If there exist no file, return an error */
     if (fPointer == NULL)
     {
         perror("opening input2.txt failed");
         return 1;
     }
 
-    /*Loop though each line of text*/
-    while(fgets(line, sizeof(line), fPointer) != NULL){
-        FoundFirstDigit = 0;
-        length = strlen(line);
-
-        /*Store the first and last digit to form the calibration value*/
-        for(i = 0; i < length; i++){
-            if(isdigit(line[i]) && !FoundFirstDigit){
-                FoundFirstDigit = 1;
-                CalVal[j][0] = line[i];
-            }
-            else if(isdigit(line[i]) && FoundFirstDigit){
-                CalVal[j][1] = line[i];
-            }
-        }
-
-        /*If there only exists one digit, dublicate it*/
-        if(!isdigit(CalVal[j][1])){
-            CalVal[j][1] = CalVal[j][0];
-        }
-
-        /*Calculate the sum of calibration values*/
-        TotCalVal += atoi(CalVal[j]);
-
-        j++;
+    /* Read each line and store left column and right column */
+    while (fgets(line, sizeof(line), fPointer) != NULL) 
+    {
+        sscanf(line, "%d %d", &LeftValue, &RightValue);
+        ValuesLeft[i] = LeftValue;
+        ValuesRight[i] = RightValue;
+        i++;
     }
 
-    /*Close the file*/
+    /* Close the file */
     fclose(fPointer);
 
-    printf("Sum of all of Calibration Values are: %d\n", TotCalVal);
+    /* Sort the arrays */
+    qsort(ValuesLeft, MAX_ROWS, sizeof(int), SortColumn);
+    qsort(ValuesRight, MAX_ROWS, sizeof(int), SortColumn);
+
+    /* Calculate the sum */
+    for (i = 0; i < MAX_ROWS; i++) {
+        Sum += abs(ValuesLeft[i] - ValuesRight[i]); 
+    }
+
+    /* Print the result */
+    printf("Similarity score is: %d\n", Sum);
     return 0;
 }

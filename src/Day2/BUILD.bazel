@@ -1,0 +1,19 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "Day2Part1",
+    srcs = ["Day2Part1.c"],
+    visibility = ["//visibility:public"],
+    copts = ["-std=c90"],
+    toolchains = ["@bazel_tools//tools/cpp:toolchain"],
+    data = ["input.txt"],
+)
+
+cc_binary(
+    name = "Day2Part2",
+    srcs = ["Day2Part2.c"],
+    visibility = ["//visibility:public"],
+    copts = ["-std=c90"],
+    toolchains = ["@bazel_tools//tools/cpp:toolchain"],
+    data = ["input.txt"],
+)

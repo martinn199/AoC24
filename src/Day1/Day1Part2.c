@@ -2,93 +2,69 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-/*Define constants*/
+/* Define constants */
 #define MAX_ROWS 1000
-#define MAX_LEN 100
+#define MAX_LEN 20
+
+/* Sort the array */
+int SortColumn(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
 
 int main() {
-    /*Define variables*/
+    /* Define variables */
     char line[MAX_LEN];
-    int i, length;
-    int j = 0;
-    int FoundFirstDigit = 0;
+    int ValuesLeft[MAX_ROWS];
+    int ValuesRight[MAX_ROWS];
+    int LeftValue;
+    int RightValue;
+    int LeftIndex;
+    int RightIndex;
+    int Gain = 0;
+    int Sum = 0;
+    int i = 0;
 
-    /*Store calibration values and the sum of all of the calibration values*/
-    char CalVal[MAX_ROWS][2] = {0};
-    int TotCalVal = 0;
-
-    /*Read file*/
+    /* Read file */
     FILE * fPointer;
     fPointer = fopen("src/Day1/input.txt", "r");
 
-    /*If there exist no file, return an error*/
+    /* If there exist no file, return an error */
     if (fPointer == NULL)
     {
         perror("opening input2.txt failed");
         return 1;
     }
 
-    /*Loop though each line of text*/
-    while(fgets(line, sizeof(line), fPointer) != NULL){
-        FoundFirstDigit = 0;
-        length = strlen(line);
+    /* Read each line and store left column and right column */
+    while (fgets(line, sizeof(line), fPointer) != NULL) 
+    {
+        sscanf(line, "%d %d", &LeftValue, &RightValue);
+        ValuesLeft[i] = LeftValue;
+        ValuesRight[i] = RightValue;
+        i++;
+    }
 
-        /*Transform the letters to digits*/
-        for(i = 0; i < length; i++){
-            if(line[i] == 'o' && line[i+1] == 'n' && line[i+2] == 'e'){
-                line[i] = '1';
-            }
-            else if(line[i] == 't' && line[i+1] == 'w' && line[i+2] == 'o'){
-                line[i] = '2';
-            }
-            else if(line[i] == 't' && line[i+1] == 'h' && line[i+2] == 'r' && line[i+3] == 'e' && line[i+4] == 'e'){
-                line[i] = '3';
-            }
-            else if(line[i] == 'f' && line[i+1] == 'o' && line[i+2] == 'u' && line[i+3] == 'r'){
-                line[i] = '4';
-            }
-            else if(line[i] == 'f' && line[i+1] == 'i' && line[i+2] == 'v' && line[i+3] == 'e'){
-                line[i] = '5';
-            }
-            else if(line[i] == 's' && line[i+1] == 'i' && line[i+2] == 'x'){
-                line[i] = '6';
-            }
-            else if(line[i] == 's' && line[i+1] == 'e' && line[i+2] == 'v' && line[i+3] == 'e' && line[i+4] == 'n'){
-                line[i] = '7';
-            }
-            else if(line[i] == 'e' && line[i+1] == 'i' && line[i+2] == 'g' && line[i+3] == 'h' && line[i+4] == 't'){
-                line[i] = '8';
-            }
-            else if(line[i] == 'n' && line[i+1] == 'i' && line[i+2] == 'n' && line[i+3] == 'e'){
-                line[i] = '9';
-            }
-
-            /*Store the first and last digit to form the calibration value*/
-            if(isdigit(line[i]) && !FoundFirstDigit){
-                FoundFirstDigit = 1;
-                CalVal[j][0] = line[i];
-            }
-            else if(isdigit(line[i]) && FoundFirstDigit){
-                CalVal[j][1] = line[i];
+    /* Calculate sum */
+    for (LeftIndex = 0; LeftIndex < MAX_ROWS; LeftIndex++)
+    {
+        for (RightIndex = 0; RightIndex < MAX_ROWS; RightIndex++)
+        {
+            if (ValuesLeft[LeftIndex] == ValuesRight[RightIndex])
+            {
+                Gain++;
             }
         }
-
-        /*If there only exists one digit, dublicate it*/
-        if(!isdigit(CalVal[j][1])){
-            CalVal[j][1] = CalVal[j][0];
-        }
-
-        /*Calculate the sum of calibration values*/
-        TotCalVal += atoi(CalVal[j]);
-
-        j++;
+        Sum += ValuesLeft[LeftIndex] * Gain;
+        Gain = 0;
     }
 
     /*Close the file*/
     fclose(fPointer);
 
-    /*Print the results*/
-    printf("Sum of all of Calibration Values are: %d\n", TotCalVal);
+    /* Print the result */
+    printf("Similarity score is: %d\n", Sum);
+
     return 0;
 }
